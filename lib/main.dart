@@ -59,6 +59,16 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('人生カウンター'),
+        ),
+        body: ListView.builder(
+          itemCount: lifeEvents.length,
+          itemBuilder: (context, index) {
+            final lifeEvent = lifeEvents[index];
+            return Text(lifeEvent.title);
+          },
+        ));
   }
 }
