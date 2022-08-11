@@ -42,10 +42,12 @@ class LifeCounterPagee extends StatefulWidget {
 class _LifeCounterPageeState extends State<LifeCounterPagee> {
   Store? store;
   Box<LifeEvent>? lifeEventBox;
+  List<LifeEvent> lifeEvents = [];
 
   Future<void> initialize() async {
     store = await openStore();
     lifeEventBox = store?.box<LifeEvent>();
+    lifeEvents = lifeEventBox?.getAll() ?? [];
     setState(() {});
   }
 
