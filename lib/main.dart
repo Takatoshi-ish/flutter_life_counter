@@ -40,6 +40,18 @@ class LifeCounterPagee extends StatefulWidget {
 
 class _LifeCounterPageeState extends State<LifeCounterPagee> {
   Store? store;
+
+  Future<void> initialize() async {
+    store = await openStore();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+  }
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold();
