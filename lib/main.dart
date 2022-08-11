@@ -47,7 +47,7 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
   Future<void> initialize() async {
     store = await openStore();
     lifeEventBox = store?.box<LifeEvent>();
-    lifeEvents = lifeEventBox?.getAll() ?? [];
+    fetchLifeEvents();
     setState(() {});
   }
 
@@ -72,7 +72,34 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
         itemCount: lifeEvents.length,
         itemBuilder: (context, index) {
           final lifeEvent = lifeEvents[index];
-          return Text(lifeEvent.title);
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Text(
+                  lifeEvent.title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                )),
+                Text(
+                  '${lifeEvent.count}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    lifeEvent.count++;
+                    lifeEventBox?.put(lifeEvent);
+                    fetchLifeEvents();
+                  },
+                  icon: const Icon(Icons.plus_one),
+                ),
+              ],
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
