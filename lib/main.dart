@@ -51,6 +51,11 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
     setState(() {});
   }
 
+  void fetchLifeEvents() {
+    lifeEvents = lifeEventBox?.getAll() ?? [];
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -82,8 +87,7 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
           );
           if (newLifeEvent != null) {
             lifeEventBox?.put(newLifeEvent);
-            lifeEvents = lifeEventBox?.getAll() ?? [];
-            setState(() {});
+            fetchLifeEvents();
           }
         },
       ),
