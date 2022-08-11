@@ -82,6 +82,8 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
           );
           if (newLifeEvent != null) {
             lifeEventBox?.put(newLifeEvent);
+            lifeEvents = lifeEventBox?.getAll() ?? [];
+            setState(() {});
           }
         },
       ),
