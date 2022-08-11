@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'life_event.dart';
 import 'objectbox.g.dart';
 
 void main() {
@@ -40,9 +41,11 @@ class LifeCounterPagee extends StatefulWidget {
 
 class _LifeCounterPageeState extends State<LifeCounterPagee> {
   Store? store;
+  Box<LifeEvent>? lifeEventBox;
 
   Future<void> initialize() async {
     store = await openStore();
+    lifeEventBox = store?.box<LifeEvent>();
     setState(() {});
   }
 
