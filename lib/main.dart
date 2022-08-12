@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './life_event.dart';
 import './objectbox.g.dart';
@@ -51,6 +52,37 @@ class _LifeCounterPageState extends State<LifeCounterPage> {
     setState(() {});
   }
 
+  void deleteAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text("Alert"),
+          content: const Text("LifeEvent をすべて削除しますか？"),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              child: const Text("キャンセル"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            CupertinoDialogAction(
+              child: const Text("削除する"),
+              onPressed: () {
+                deleteLifeEvents();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteLifeEvents() {
+    lifeEventBox?.removeAll();
+    fetchLifeEvents();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +94,12 @@ class _LifeCounterPageState extends State<LifeCounterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('人生カウンター'),
+        actions: [
+          IconButton(
+            onPressed: lifeEvents.isNotEmpty ? deleteAlertDialog : null,
+            icon: const Icon(Icons.remove_circle),
+          )
+        ],
       ),
       body: ListView.builder(
         itemCount: lifeEvents.length, // ここには必ずListの総数を与えてください
