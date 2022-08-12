@@ -1,56 +1,51 @@
 import 'package:flutter/material.dart';
+import './life_event.dart';
+import './objectbox.g.dart';
 
-import 'life_event.dart';
-import 'objectbox.g.dart';
-
+// まずは main 関数が実行されます
 void main() {
+  // runApp の中に書いた Widget が最初に表示されます
+  // この Widget と ルート Widget と呼んだりもします
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const LifeCounterPagee(),
+      // この primarySwatch プロパティの色は自分好みに変更してOKです
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const LifeCounterPage(),
     );
   }
 }
 
-class LifeCounterPagee extends StatefulWidget {
-  const LifeCounterPagee({Key? key}) : super(key: key);
+class LifeCounterPage extends StatefulWidget {
+  const LifeCounterPage({super.key});
 
   @override
-  State<LifeCounterPagee> createState() => _LifeCounterPageeState();
+  State<LifeCounterPage> createState() => _LifeCounterPageState();
 }
 
-class _LifeCounterPageeState extends State<LifeCounterPagee> {
+class _LifeCounterPageState extends State<LifeCounterPage> {
+  // ObjectBoxを利用するにはまず store が必要になります
+  // ですが store を作成するには openStore という非同期関数の実行が必要です
+  // なのでこの段階で初期値として store を代入することはできません
+  // そのためまずは null を入れる必要があります
+  // 変数に null が入ることを許容するには Store? のように ? をつければよいです
   Store? store;
   Box<LifeEvent>? lifeEventBox;
   List<LifeEvent> lifeEvents = [];
 
+  /// Store と Box を用意します
   Future<void> initialize() async {
     store = await openStore();
     lifeEventBox = store?.box<LifeEvent>();
     fetchLifeEvents();
-    setState(() {});
   }
 
+  /// Box から LifeEvent 一覧を取得します
   void fetchLifeEvents() {
     lifeEvents = lifeEventBox?.getAll() ?? [];
     setState(() {});
@@ -69,20 +64,22 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
         title: const Text('人生カウンター'),
       ),
       body: ListView.builder(
-        itemCount: lifeEvents.length,
+        itemCount: lifeEvents.length, // ここには必ずListの総数を与えてください
         itemBuilder: (context, index) {
+          // List は　[要素番号] でその一つひとつの要素を取得できます
           final lifeEvent = lifeEvents[index];
           return Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 Expanded(
-                    child: Text(
-                  lifeEvent.title,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  child: Text(
+                    lifeEvent.title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
-                )),
+                ),
                 Text(
                   '${lifeEvent.count}',
                   style: const TextStyle(
@@ -90,6 +87,7 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
                   ),
                 ),
                 IconButton(
+                  // ここでカウントアップしています
                   onPressed: () {
                     lifeEvent.count++;
                     lifeEventBox?.put(lifeEvent);
@@ -98,6 +96,16 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
                   icon: const Icon(Icons.plus_one),
                 ),
                 IconButton(
+                  // ここでカウントダウンしています
+                  onPressed: () {
+                    lifeEvent.count--;
+                    lifeEventBox?.put(lifeEvent);
+                    fetchLifeEvents();
+                  },
+                  icon: const Icon(Icons.exposure_minus_1),
+                ),
+                IconButton(
+                  // ここでデータを削除しています
                   onPressed: () {
                     lifeEventBox?.remove(lifeEvent.id);
                     fetchLifeEvents();
@@ -111,6 +119,7 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
+        // ここで画面遷移とデータを新規追加しています
         onPressed: () async {
           final newLifeEvent = await Navigator.of(context).push<LifeEvent>(
             MaterialPageRoute(
@@ -130,7 +139,7 @@ class _LifeCounterPageeState extends State<LifeCounterPagee> {
 }
 
 class AddLifeEventPage extends StatefulWidget {
-  const AddLifeEventPage({Key? key}) : super(key: key);
+  const AddLifeEventPage({super.key});
 
   @override
   State<AddLifeEventPage> createState() => _AddLifeEventPageState();
